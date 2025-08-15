@@ -8,6 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.NumberFormat;
@@ -36,7 +37,12 @@ public class ContaViewHolder  extends RecyclerView.ViewHolder {
     void bindTo(Conta c) {
         this.nomeCliente.setText(c.nomeCliente);
         this.infoConta.setText(c.numero + " | " + "Saldo atual: R$" + NumberFormat.getCurrencyInstance().format(c.saldo));
-        //TODO Falta atualizar a imagem de acordo com o valor do saldo atual
+        
+        if (c.saldo < 0) {
+            this.icone.setImageResource(R.drawable.delete);
+        } else {
+            this.icone.setImageResource(R.drawable.ok);
+        }
 
         this.btnEdit.setOnClickListener(
                 v -> {
@@ -49,7 +55,7 @@ public class ContaViewHolder  extends RecyclerView.ViewHolder {
                             this.context,
                             EditarContaActivity.class
                     );
-                    //TODO Está especificando a Activity mas não está passando o número da conta pelo Intent
+                    i.putExtra("numeroDaConta", c.numero);
                     this.context.startActivity(i);
                 }
         );
@@ -60,8 +66,8 @@ public class ContaViewHolder  extends RecyclerView.ViewHolder {
                             "clicou no botão de deletar conta",
                             Toast.LENGTH_SHORT
                     ).show();
-                    //TODO implementar aqui a remoção da conta ao clicar!
-
+                    ContaViewModel viewModel = new ViewModelProvider((androidx.activity.ComponentActivity) this.context).get(ContaViewModel.class);
+                    viewModel.remover(c);
                 }
         );
     }

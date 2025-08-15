@@ -24,5 +24,39 @@ public class TransacaoRepository {
         dao.adicionar(t);
     }
 
-    //TODO implementar métodos de busca de transações
+    // Buscar transações pelo número da conta
+    @WorkerThread
+    public List<Transacao> buscarPeloNumeroConta(String numeroConta) {
+        return dao.buscarPeloNumeroConta(numeroConta);
+    }
+
+    // Buscar transações pela data
+    @WorkerThread
+    public List<Transacao> buscarPelaData(String data) {
+        return dao.buscarPelaData(data);
+    }
+
+    // Buscar transações pela data e tipo (crédito)
+    @WorkerThread
+    public List<Transacao> buscarPelaDataECredito(String data) {
+        return dao.buscarPelaDataECredito(data);
+    }
+
+    // Buscar transações pela data e tipo (débito)
+    @WorkerThread
+    public List<Transacao> buscarPelaDataEDebito(String data) {
+        return dao.buscarPelaDataEDebito(data);
+    }
+
+    // Buscar transações pelo número da conta e tipo (crédito)
+    @WorkerThread
+    public List<Transacao> buscarPeloNumeroContaECredito(String numeroConta) {
+        return dao.buscarPeloNumeroContaECredito(numeroConta);
+    }
+
+    // Buscar transações pelo número da conta e tipo (débito)
+    @WorkerThread
+    public List<Transacao> buscarPeloNumeroContaEDebito(String numeroConta) {
+        return dao.buscarPeloNumeroContaEDebito(numeroConta);
+    }
 }

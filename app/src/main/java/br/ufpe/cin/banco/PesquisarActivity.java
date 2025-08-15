@@ -3,7 +3,9 @@ package br.ufpe.cin.banco;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +16,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import br.ufpe.cin.banco.conta.Conta;
 import br.ufpe.cin.banco.conta.ContaAdapter;
 
 //Ver anotações TODO no código
@@ -43,13 +49,64 @@ public class PesquisarActivity extends AppCompatActivity {
 
         btnPesquisar.setOnClickListener(
                 v -> {
-                    String oQueFoiDigitado = aPesquisar.getText().toString();
-                    //TODO implementar a busca de acordo com o tipo de busca escolhido pelo usuário
+                    String oQueFoiDigitado = aPesquisar.getText().toString().trim();
+                    
+                    if (oQueFoiDigitado.isEmpty()) {
+                        Toast.makeText(this, "Digite algo para pesquisar", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    
+                    int selectedId = tipoPesquisa.getCheckedRadioButtonId();
+                    
+                    if (selectedId == R.id.peloNomeCliente) {
+                        buscarPorNome(oQueFoiDigitado);
+                    } else if (selectedId == R.id.peloCPFcliente) {
+                        buscarPorCPF(oQueFoiDigitado);
+                    } else if (selectedId == R.id.peloNumeroConta) {
+                        buscarPorNumeroConta(oQueFoiDigitado);
+                    }
                 }
         );
 
-        //TODO atualizar o RecyclerView com resultados da busca na medida que encontrar
-
-
+        adapter.submitList(new ArrayList<>());
+    }
+    
+    private void buscarPorNome(String nome) {
+        new Thread(() -> {
+            List<Conta> contas = viewModel.getContaRepository().buscarPeloNome(nome);
+            runOnUiThread(() -> {
+                if (contas.isEmpty()) {
+                    Toast.makeText(this, "Nenhuma conta encontrada para o nome: " + nome, Toast.LENGTH_SHORT).show();
+                }
+                adapter.submitList(contas);
+            });
+        }).start();
+    }
+    
+    private void buscarPorCPF(String cpf) {
+        new Thread(() -> {
+            List<Conta> contas = viewModel.getContaRepository().buscarPeloCPF(cpf);
+            runOnUiThread(() -> {
+                if (contas.isEmpty()) {
+                    Toast.makeText(this, "Nenhuma conta encontrada para o CPF: " + cpf, Toast.LENGTH_SHORT).show();
+                }
+                adapter.submitList(contas);
+            });
+        }).start();
+    }
+    
+    private void buscarPorNumeroConta(String numeroConta) {
+        new Thread(() -> {
+            Conta conta = viewModel.getContaRepository().buscarPeloNumero(numeroConta);
+            runOnUiThread(() -> {
+                List<Conta> contas = new ArrayList<>();
+                if (conta != null) {
+                    contas.add(conta);
+                } else {
+                    Toast.makeText(this, "Conta não encontrada: " + numeroConta, Toast.LENGTH_SHORT).show();
+                }
+                adapter.submitList(contas);
+            });
+        }).start();
     }
 }

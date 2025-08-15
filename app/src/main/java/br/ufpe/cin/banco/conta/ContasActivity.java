@@ -45,11 +45,10 @@ public class ContasActivity extends AppCompatActivity {
                 }
         );
 
-        //TODO Ainda falta implementar o código que atualiza a lista de contas automaticamente na tela
         this.viewModel.contas.observe(
                 this,
                 todasContas -> {
-                    //Código atual apenas lista no log todas as contas salvas no banco de dados, útil para depuração
+                    adapter.submitList(todasContas);
                     for (Conta c : todasContas) {
                         Log.i("TESTANDO", c.toString());
                     }

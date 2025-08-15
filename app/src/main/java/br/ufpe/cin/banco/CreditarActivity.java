@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,7 +14,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
+import br.ufpe.cin.banco.transacoes.Transacao;
 import br.ufpe.cin.banco.transacoes.TransacaoViewModel;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 //Ver anotações TODO no código
 public class CreditarActivity extends AppCompatActivity {
@@ -48,12 +54,42 @@ public class CreditarActivity extends AppCompatActivity {
 
         btnOperacao.setOnClickListener(
                 v -> {
-                    String numOrigem = numeroContaOrigem.getText().toString();
-                    //TODO lembrar de implementar validação do número da conta e do valor da operação, antes de efetuar a operação de crédito.
-                    // O método abaixo está sendo chamado, mas precisa ser implementado na classe BancoViewModel para funcionar.
-                    // Tem que salvar a transação no Banco de Dados também, criando um objeto Transacao que será salvo na tabela transacoes por meio de TransacaoViewModel
-                    double valor = Double.valueOf(valorOperacao.getText().toString());
-                    viewModel.creditar(numOrigem,valor);
+                    String numOrigem = numeroContaOrigem.getText().toString().trim();
+                    String valorTexto = valorOperacao.getText().toString().trim();
+                    
+                    if (numOrigem.isEmpty()) {
+                        Toast.makeText(this, "Número da conta é obrigatório!", Toast.LENGTH_SHORT).show();
+                        numeroContaOrigem.requestFocus();
+                        return;
+                    }
+                    
+                    if (valorTexto.isEmpty()) {
+                        Toast.makeText(this, "Valor é obrigatório!", Toast.LENGTH_SHORT).show();
+                        valorOperacao.requestFocus();
+                        return;
+                    }
+                    
+                    double valor;
+                    try {
+                        valor = Double.parseDouble(valorTexto);
+                        if (valor <= 0) {
+                            Toast.makeText(this, "Valor deve ser maior que zero!", Toast.LENGTH_SHORT).show();
+                            valorOperacao.requestFocus();
+                            return;
+                        }
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(this, "Valor deve ser um número válido!", Toast.LENGTH_SHORT).show();
+                        valorOperacao.requestFocus();
+                        return;
+                    }
+                    
+                    viewModel.creditar(numOrigem, valor);
+
+                    String dataAtual = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
+                    Transacao transacao = new Transacao(0, 'C', numOrigem, valor, dataAtual);
+                    transacaoViewModel.inserir(transacao);
+                    
+                    Toast.makeText(this, "Crédito realizado com sucesso!", Toast.LENGTH_SHORT).show();
                     finish();
                 }
         );

@@ -5,8 +5,11 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
+import br.ufpe.cin.banco.conta.Conta;
 import br.ufpe.cin.banco.conta.ContaRepository;
 import br.ufpe.cin.banco.transacoes.TransacaoRepository;
+
+import java.util.List;
 
 //Ver anotações TODO no código
 public class BancoViewModel extends AndroidViewModel {
@@ -20,39 +23,61 @@ public class BancoViewModel extends AndroidViewModel {
     }
 
     void transferir(String numeroContaOrigem, String numeroContaDestino, double valor) {
-        //TODO implementar transferência entre contas (lembrar de salvar no BD os objetos Conta modificados)
+        new Thread(() -> {
+            var contaOrigem = contaRepository.buscarPeloNumero(numeroContaOrigem);
+            var contaDestino = contaRepository.buscarPeloNumero(numeroContaDestino);
+
+            if (contaOrigem != null && contaDestino != null) {
+                contaOrigem.saldo = contaOrigem.saldo - valor;
+                contaDestino.saldo = contaDestino.saldo + valor;
+
+                contaRepository.atualizar(contaOrigem);
+                contaRepository.atualizar(contaDestino);
+            }
+        }).start();
     }
 
     void creditar(String numeroConta, double valor) {
-        //TODO implementar creditar em conta (lembrar de salvar no BD o objeto Conta modificado)
+        new Thread(() -> {
+            var conta = contaRepository.buscarPeloNumero(numeroConta);
+
+            if (conta != null) {
+                conta.saldo = conta.saldo + valor;
+                contaRepository.atualizar(conta);
+            }
+        }).start();
     }
 
     void debitar(String numeroConta, double valor) {
-        //TODO implementar debitar em conta (lembrar de salvar no BD o objeto Conta modificado)
+        new Thread(() -> {
+            var conta = contaRepository.buscarPeloNumero(numeroConta);
+            if (conta != null) {
+                conta.saldo = conta.saldo - valor;
+                contaRepository.atualizar(conta);
+            }
+        }).start();
     }
 
     void buscarContasPeloNome(String nomeCliente) {
-        //TODO implementar busca pelo nome do Cliente
+        new Thread(() -> {
+            var contas = contaRepository.buscarPeloNome(nomeCliente);
+        }).start();
     }
 
     void buscarContasPeloCPF(String cpfCliente) {
-        //TODO implementar busca pelo CPF do Cliente
+        new Thread(() -> {
+            var contas = contaRepository.buscarPeloCPF(cpfCliente);
+        }).start();
     }
 
     void buscarContaPeloNumero(String numeroConta) {
-        //TODO implementar busca pelo número da Conta
+        new Thread(() -> {
+            var conta = contaRepository.buscarPeloNumero(numeroConta);
+        }).start();
     }
 
-    void buscarTransacoesPeloNumero(String numeroConta) {
-        //TODO implementar
-    }
-
-    void buscarTransacoesPeloTipo(String tipoTransacao) {
-        //TODO implementar
-    }
-
-    void buscarTransacoesPelaData(String dataTransacao) {
-        //TODO implementar
+    public ContaRepository getContaRepository() {
+        return contaRepository;
     }
 
 }

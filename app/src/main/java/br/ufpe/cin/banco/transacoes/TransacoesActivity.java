@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +14,9 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import br.ufpe.cin.banco.BancoViewModel;
 import br.ufpe.cin.banco.R;
@@ -46,15 +50,112 @@ public class TransacoesActivity extends AppCompatActivity {
         rvResultado.setLayoutManager(new LinearLayoutManager(this));
         rvResultado.setAdapter(adapter);
 
-        btnPesquisar.setOnClickListener(
-                v -> {
-                    String oQueFoiDigitado = aPesquisar.getText().toString();
-                    //TODO implementar o filtro de transações com o tipo de busca escolhido pelo usuário
+        transacaoViewModel.transacoes.observe(this, transacoes -> {
+            if (transacoes != null) {
+                adapter.submitList(transacoes);
+            }
+        });
+
+        btnPesquisar.setOnClickListener(v -> {
+            String oQueFoiDigitado = aPesquisar.getText().toString().trim();
+            
+            if (oQueFoiDigitado.isEmpty()) {
+                Toast.makeText(this, "Digite algo para pesquisar", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            int tipoPesquisaId = tipoPesquisa.getCheckedRadioButtonId();
+            int tipoTransacaoId = tipoTransacao.getCheckedRadioButtonId();
+            
+            if (tipoPesquisaId == R.id.pelaData) {
+                if (tipoTransacaoId == R.id.peloTipoCredito) {
+                    buscarPorDataECredito(oQueFoiDigitado);
+                } else if (tipoTransacaoId == R.id.peloTipoDebito) {
+                    buscarPorDataEDebito(oQueFoiDigitado);
+                } else {
+                    buscarPorData(oQueFoiDigitado);
                 }
-        );
-
-        //TODO atualizar o RecyclerView com resultados da busca na medida que encontrar
-        // inicialmente deve exibir a lista de todas as transações
-
+            } else if (tipoPesquisaId == R.id.peloNumeroConta) {
+                if (tipoTransacaoId == R.id.peloTipoCredito) {
+                    buscarPorNumeroContaECredito(oQueFoiDigitado);
+                } else if (tipoTransacaoId == R.id.peloTipoDebito) {
+                    buscarPorNumeroContaEDebito(oQueFoiDigitado);
+                } else {
+                    buscarPorNumeroConta(oQueFoiDigitado);
+                }
+            }
+        });
+    }
+   
+    private void buscarPorData(String data) {
+        new Thread(() -> {
+            List<Transacao> transacoes = transacaoViewModel.getRepository().buscarPelaData(data);
+            runOnUiThread(() -> {
+                if (transacoes.isEmpty()) {
+                    Toast.makeText(this, "Nenhuma transação encontrada para a data: " + data, Toast.LENGTH_SHORT).show();
+                }
+                adapter.submitList(transacoes);
+            });
+        }).start();
+    }
+    
+    private void buscarPorDataECredito(String data) {
+        new Thread(() -> {
+            List<Transacao> transacoes = transacaoViewModel.getRepository().buscarPelaDataECredito(data);
+            runOnUiThread(() -> {
+                if (transacoes.isEmpty()) {
+                    Toast.makeText(this, "Nenhuma transação de crédito encontrada para a data: " + data, Toast.LENGTH_SHORT).show();
+                }
+                adapter.submitList(transacoes);
+            });
+        }).start();
+    }
+    
+    private void buscarPorDataEDebito(String data) {
+        new Thread(() -> {
+            List<Transacao> transacoes = transacaoViewModel.getRepository().buscarPelaDataEDebito(data);
+            runOnUiThread(() -> {
+                if (transacoes.isEmpty()) {
+                    Toast.makeText(this, "Nenhuma transação de débito encontrada para a data: " + data, Toast.LENGTH_SHORT).show();
+                }
+                adapter.submitList(transacoes);
+            });
+        }).start();
+    }
+    
+    private void buscarPorNumeroConta(String numeroConta) {
+        new Thread(() -> {
+            List<Transacao> transacoes = transacaoViewModel.getRepository().buscarPeloNumeroConta(numeroConta);
+            runOnUiThread(() -> {
+                if (transacoes.isEmpty()) {
+                    Toast.makeText(this, "Nenhuma transação encontrada para a conta: " + numeroConta, Toast.LENGTH_SHORT).show();
+                }
+                adapter.submitList(transacoes);
+            });
+        }).start();
+    }
+    
+    private void buscarPorNumeroContaECredito(String numeroConta) {
+        new Thread(() -> {
+            List<Transacao> transacoes = transacaoViewModel.getRepository().buscarPeloNumeroContaECredito(numeroConta);
+            runOnUiThread(() -> {
+                if (transacoes.isEmpty()) {
+                    Toast.makeText(this, "Nenhuma transação de crédito encontrada para a conta: " + numeroConta, Toast.LENGTH_SHORT).show();
+                }
+                adapter.submitList(transacoes);
+            });
+        }).start();
+    }
+    
+    private void buscarPorNumeroContaEDebito(String numeroConta) {
+        new Thread(() -> {
+            List<Transacao> transacoes = transacaoViewModel.getRepository().buscarPeloNumeroContaEDebito(numeroConta);
+            runOnUiThread(() -> {
+                if (transacoes.isEmpty()) {
+                    Toast.makeText(this, "Nenhuma transação de débito encontrada para a conta: " + numeroConta, Toast.LENGTH_SHORT).show();
+                }
+                adapter.submitList(transacoes);
+            });
+        }).start();
     }
 }

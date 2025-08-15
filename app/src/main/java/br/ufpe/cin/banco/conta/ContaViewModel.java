@@ -16,8 +16,6 @@ public class ContaViewModel extends AndroidViewModel {
 
     private ContaRepository repository;
     public LiveData<List<Conta>> contas;
-    private MutableLiveData<Conta> _contaAtual = new MutableLiveData<>();
-    public LiveData<Conta> contaAtual = _contaAtual;
 
     public ContaViewModel(@NonNull Application application) {
         super(application);
@@ -30,14 +28,26 @@ public class ContaViewModel extends AndroidViewModel {
     }
 
     void atualizar(Conta c) {
-        //TODO implementar
+        new Thread(() -> repository.atualizar(c)).start();
     }
 
     void remover(Conta c) {
-        //TODO implementar
+        new Thread(() -> repository.remover(c)).start();
     }
 
     void buscarPeloNumero(String numeroConta) {
-        //TODO implementar
+        new Thread(() -> repository.buscarPeloNumero(numeroConta)).start();
+    }
+
+    void buscarPeloNome(String nomeCliente) {
+        new Thread(() -> repository.buscarPeloNome(nomeCliente)).start();
+    }
+
+    void buscarPeloCPF(String cpfCliente) {
+        new Thread(() -> repository.buscarPeloCPF(cpfCliente)).start();
+    }
+
+    public ContaRepository getRepository() {
+        return repository;
     }
 }

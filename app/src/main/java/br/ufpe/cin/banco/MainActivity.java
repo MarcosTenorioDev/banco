@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import br.ufpe.cin.banco.cliente.ClientesActivity;
+import br.ufpe.cin.banco.conta.Conta;
 import br.ufpe.cin.banco.conta.ContasActivity;
 import br.ufpe.cin.banco.transacoes.TransacoesActivity;
 
@@ -45,6 +46,17 @@ public class MainActivity extends AppCompatActivity {
         //Remover a linha abaixo se for implementar a parte de Clientes
         clientes.setEnabled(false);
 
+        viewModel.getContaRepository().getContas().observe(this, listaContas -> {
+            if (listaContas != null) {
+                double total = 0.0;
+                for (Conta conta : listaContas) {
+                    total += conta.saldo;
+                }
+                String totalFormatado = String.format("R$ %.2f", total);
+                totalBanco.setText(totalFormatado);
+            }
+        });
+
         contas.setOnClickListener(
                 v -> startActivity(new Intent(this, ContasActivity.class))
         );
@@ -67,5 +79,4 @@ public class MainActivity extends AppCompatActivity {
                 v -> startActivity(new Intent(this, TransacoesActivity.class))
         );
     }
-    //TODO Neste arquivo ainda falta a atualização automática do valor total de dinheiro armazenado no banco
 }

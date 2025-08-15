@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -49,9 +50,51 @@ public class AdicionarContaActivity extends AppCompatActivity {
                     String cpfCliente = campoCPF.getText().toString();
                     String numeroConta = campoNumero.getText().toString();
                     String saldoConta = campoSaldo.getText().toString();
-                    //TODO: Incluir validações aqui, antes de criar um objeto Conta (por exemplo, verificar que digitou um nome com pelo menos 5 caracteres, que o campo de saldo tem de fato um número, assim por diante). Se todas as validações passarem, aí sim cria a Conta conforme linha abaixo.
+                    
+                    //Validações dos campos
+                    if (nomeCliente.isEmpty()) {
+                        Toast.makeText(this, "Nome do cliente é obrigatório!", Toast.LENGTH_SHORT).show();
+                        campoNome.requestFocus();
+                        return;
+                    }
+                    
+                    if (nomeCliente.length() < 5) {
+                        Toast.makeText(this, "Nome deve ter pelo menos 5 caracteres!", Toast.LENGTH_SHORT).show();
+                        campoNome.requestFocus();
+                        return;
+                    }
+                    
+                    if (cpfCliente.isEmpty()) {
+                        Toast.makeText(this, "CPF do cliente é obrigatório!", Toast.LENGTH_SHORT).show();
+                        campoCPF.requestFocus();
+                        return;
+                    }
+                    
+                    if (numeroConta.isEmpty()) {
+                        Toast.makeText(this, "Número da conta é obrigatório!", Toast.LENGTH_SHORT).show();
+                        campoNumero.requestFocus();
+                        return;
+                    }
+                    
+                    if (saldoConta.isEmpty()) {
+                        Toast.makeText(this, "Saldo é obrigatório!", Toast.LENGTH_SHORT).show();
+                        campoSaldo.requestFocus();
+                        return;
+                    }
+
+                    double saldo;
+                    try {
+                        saldo = Double.parseDouble(saldoConta);
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(this, "Saldo deve ser um número válido!", Toast.LENGTH_SHORT).show();
+                        campoSaldo.requestFocus();
+                        return;
+                    }
+
                     Conta c = new Conta(numeroConta, Double.valueOf(saldoConta), nomeCliente, cpfCliente);
-                    //TODO: chamar o método que vai salvar a conta no Banco de Dados
+                    viewModel.inserir(c);
+                    Toast.makeText(this, "Conta criada com sucesso!", Toast.LENGTH_SHORT).show();
+                    finish();
                 }
         );
 

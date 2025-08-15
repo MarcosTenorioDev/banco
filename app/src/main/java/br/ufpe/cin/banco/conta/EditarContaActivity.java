@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +20,7 @@ public class EditarContaActivity extends AppCompatActivity {
 
     public static final String KEY_NUMERO_CONTA = "numeroDaConta";
     ContaViewModel viewModel;
+    private Conta contaAtual;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,21 +46,75 @@ public class EditarContaActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         String numeroConta = i.getStringExtra(KEY_NUMERO_CONTA);
-        //TODO usar o número da conta passado via Intent para recuperar informações da conta
+        
+        if (numeroConta != null && !numeroConta.isEmpty()) {
+            new Thread(() -> {
+                contaAtual = viewModel.getRepository().buscarPeloNumero(numeroConta);
+                runOnUiThread(() -> {
+                    if (contaAtual != null) {
+                        campoNome.setText(contaAtual.nomeCliente);
+                        campoNumero.setText(contaAtual.numero);
+                        campoCPF.setText(contaAtual.cpfCliente);
+                        campoSaldo.setText(String.valueOf(contaAtual.saldo));
+                    }
+                });
+            }).start();
+        }
 
         btnAtualizar.setText("Editar");
         btnAtualizar.setOnClickListener(
                 v -> {
-                    String nomeCliente = campoNome.getText().toString();
-                    String cpfCliente = campoCPF.getText().toString();
-                    String saldoConta = campoSaldo.getText().toString();
-                    //TODO: Incluir validações aqui, antes de criar um objeto Conta. Se todas as validações passarem, aí sim monta um objeto Conta.
-                    //TODO: chamar o método que vai atualizar a conta no Banco de Dados
+                    String nomeCliente = campoNome.getText().toString().trim();
+                    String cpfCliente = campoCPF.getText().toString().trim();
+                    String saldoConta = campoSaldo.getText().toString().trim();
+                    
+                    if (nomeCliente.isEmpty()) {
+                        Toast.makeText(this, "Nome do cliente é obrigatório!", Toast.LENGTH_SHORT).show();
+                        campoNome.requestFocus();
+                        return;
+                    }
+                    
+                    if (nomeCliente.length() < 5) {
+                        Toast.makeText(this, "Nome deve ter pelo menos 5 caracteres!", Toast.LENGTH_SHORT).show();
+                        campoNome.requestFocus();
+                        return;
+                    }
+                    
+                    if (cpfCliente.isEmpty()) {
+                        Toast.makeText(this, "CPF do cliente é obrigatório!", Toast.LENGTH_SHORT).show();
+                        campoCPF.requestFocus();
+                        return;
+                    }
+                    
+                    if (saldoConta.isEmpty()) {
+                        Toast.makeText(this, "Saldo é obrigatório!", Toast.LENGTH_SHORT).show();
+                        campoSaldo.requestFocus();
+                        return;
+                    }
+                    
+                    double saldo;
+                    try {
+                        saldo = Double.parseDouble(saldoConta);
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(this, "Saldo deve ser um número válido!", Toast.LENGTH_SHORT).show();
+                        campoSaldo.requestFocus();
+                        return;
+                    }
+                    
+                    Conta contaAtualizada = new Conta(numeroConta, saldo, nomeCliente, cpfCliente);
+                    viewModel.atualizar(contaAtualizada);
+                    
+                    Toast.makeText(this, "Conta atualizada com sucesso!", Toast.LENGTH_SHORT).show();
+                    finish();
                 }
         );
 
         btnRemover.setOnClickListener(v -> {
-            //TODO implementar remoção da conta
+            if (contaAtual != null) {
+                viewModel.remover(contaAtual);
+                Toast.makeText(this, "Conta removida com sucesso!", Toast.LENGTH_SHORT).show();
+                finish();
+            }
         });
     }
 }

@@ -19,6 +19,28 @@ public interface TransacaoDAO {
     @Query("SELECT * FROM transacoes ORDER BY dataTransacao DESC")
     LiveData<List<Transacao>> transacoes();
 
-    //TODO incluir métodos para buscar transações pelo (1) número da conta, (2) pela data, filtrando pelo tipo da transação (crédito, débito, ou todas)
+    // Buscar transações pelo número da conta
+    @Query("SELECT * FROM transacoes WHERE numeroConta = :numeroConta ORDER BY dataTransacao DESC")
+    List<Transacao> buscarPeloNumeroConta(String numeroConta);
+
+    // Buscar transações pela data
+    @Query("SELECT * FROM transacoes WHERE dataTransacao = :data ORDER BY dataTransacao DESC")
+    List<Transacao> buscarPelaData(String data);
+
+    // Buscar transações pela data e tipo (crédito)
+    @Query("SELECT * FROM transacoes WHERE dataTransacao = :data AND tipoTransacao = 'C' ORDER BY dataTransacao DESC")
+    List<Transacao> buscarPelaDataECredito(String data);
+
+    // Buscar transações pela data e tipo (débito)
+    @Query("SELECT * FROM transacoes WHERE dataTransacao = :data AND tipoTransacao = 'D' ORDER BY dataTransacao DESC")
+    List<Transacao> buscarPelaDataEDebito(String data);
+
+    // Buscar transações pelo número da conta e tipo (crédito)
+    @Query("SELECT * FROM transacoes WHERE numeroConta = :numeroConta AND tipoTransacao = 'C' ORDER BY dataTransacao DESC")
+    List<Transacao> buscarPeloNumeroContaECredito(String numeroConta);
+
+    // Buscar transações pelo número da conta e tipo (débito)
+    @Query("SELECT * FROM transacoes WHERE numeroConta = :numeroConta AND tipoTransacao = 'D' ORDER BY dataTransacao DESC")
+    List<Transacao> buscarPeloNumeroContaEDebito(String numeroConta);
 
 }
