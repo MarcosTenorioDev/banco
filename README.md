@@ -1,9 +1,5 @@
 # Documentação do Projeto Banco Android
 
-## Sobre o Projeto
-
-Este é um aplicativo Android que simula um sistema bancário básico. O projeto foi desenvolvido usando a arquitetura MVVM com Room Database para persistência local. O app permite gerenciar contas bancárias, fazer operações como crédito, débito e transferência, além de registrar e consultar transações.
-
 ## O que foi implementado
 
 ### Item 1 - ContasActivity
