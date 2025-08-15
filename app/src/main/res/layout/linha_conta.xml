@@ -1,69 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:cardview="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
+    android:layout_margin="8dp"
     android:id="@+id/cardLinha"
-    cardview:cardCornerRadius="5dp">
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="#FFFFFF">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="16dp">
 
+        <!-- Ícone de status -->
         <ImageView
             android:id="@+id/icone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_gravity="center_vertical"
-            android:contentDescription="Icone"
-            android:padding="2dip"
-            android:src="@drawable/ok" />
+            android:contentDescription="Status da conta"
+            android:padding="8dp"
+            android:src="@drawable/ok"
+            android:background="@drawable/icon_background"
+            android:layout_marginEnd="16dp" />
 
+        <!-- Informações da conta -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:orientation="vertical">
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical">
 
             <TextView
                 android:id="@+id/nomeCliente"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nome cliente"
-                android:textSize="25sp"
-                android:textStyle="bold" />
+                android:text="Nome do Cliente"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#212121"
+                android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/infoConta"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="número e saldo da conta"
-                android:textSize="15sp" />
+                android:text="Conta: 12345 | Saldo: R$ 1.000,00"
+                android:textSize="14sp"
+                android:textColor="#757575" />
+
         </LinearLayout>
 
+        <!-- Botões de ação -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:gravity="right"
-            android:orientation="vertical">
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_marginStart="8dp">
 
-            <ImageView
+            <ImageButton
                 android:id="@+id/btn_edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:src="@android:drawable/ic_menu_edit" />
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:background="@drawable/button_icon_edit"
+                android:src="@android:drawable/ic_menu_edit"
+                android:contentDescription="Editar conta"
+                android:layout_marginEnd="8dp"
+                android:padding="8dp" />
 
-            <ImageView
+            <ImageButton
                 android:id="@+id/btn_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:src="@android:drawable/ic_delete" />
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:background="@drawable/button_icon_delete"
+                android:src="@android:drawable/ic_delete"
+                android:contentDescription="Excluir conta"
+                android:padding="8dp" />
+
         </LinearLayout>
 
     </LinearLayout>

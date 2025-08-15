@@ -177,3 +177,36 @@ void buscarTransacoesPelaData(String data) {
 
 ### Item 21 - TransacoesActivity
 A tela de transações agora permite buscar por data ou número da conta, com filtros opcionais por tipo de transação (crédito/débito). Os resultados são exibidos no RecyclerView e atualizados automaticamente.
+
+
+## Items opcionais:
+
+### Fazer melhorias gerais de UI na aplicação.
+#### 1. Tela Principal (MainActivity)
+- Layout em grid 2x3 para melhor organização
+- Botões coloridos com ícones emoji
+- Card destacado para o total do banco
+#### 2. Lista de Contas
+- Cards para as contas
+- Ícones de status com background circular
+- Botões de editar e excluir com cores diferenciadas
+- Efeito de profundidade
+#### 3. Formulários
+- Header informativo com ícones
+- Campos com background diferente do fundo
+- emojis
+#### 4. Operações Bancárias e histórico de transações,
+- Cards
+- Cores destacando items principais
+- RadioButtons com ícones e cores
+#### 5. Componetização personalizada
+- button_primary.xml - Botão azul principal
+- button_secondary.xml - Botão roxo
+- button_danger.xml - Botão vermelho
+- button_success.xml - Botão verde
+- button_info.xml - Botão azul claro
+- button_warning.xml - Botão laranja
+- button_dark.xml - Botão cinza
+- edit_text_background.xml - Background dos campos
+- icon_background.xml - Background dos ícones
+- valor_background.xml - Background dos valores

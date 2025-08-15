@@ -1,91 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="5dp">
+    android:background="#F5F5F5">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Número da Conta"
-        android:textSize="24sp" />
-
-    <EditText
-        android:id="@+id/numero"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:inputType="number"
-        android:fontFamily="sans-serif-light"
-        android:hint="Digite o número da conta"
-        android:minHeight="48dp"
-        android:textSize="18sp" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Nome"
-        android:textSize="24sp" />
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#1976D2"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
 
-    <EditText
-        android:id="@+id/nome"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:fontFamily="sans-serif-light"
-        android:hint="Digite um nome"
-        android:minHeight="48dp"
-        android:textSize="18sp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🏦 Dados da Conta"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:gravity="center"
+                android:layout_marginBottom="8dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CPF"
-        android:textSize="24sp" />
-    <EditText
-        android:id="@+id/cpf"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:fontFamily="sans-serif-light"
-        android:hint="Digite um CPF"
-        android:inputType="numberDecimal"
-        android:minHeight="48dp"
-        android:textSize="18sp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Preencha os dados da conta bancária"
+                android:textSize="14sp"
+                android:textColor="#E3F2FD"
+                android:gravity="center" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Saldo"
-        android:textSize="24sp" />
+        </LinearLayout>
 
-    <EditText
-        android:id="@+id/saldo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:inputType="numberDecimal"
-        android:fontFamily="sans-serif-light"
-        android:hint="Digite o saldo"
-        android:minHeight="48dp"
-        android:textSize="18sp" />
+        <!-- Formulário -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#FFFFFF"
+            android:layout_marginBottom="16dp">
 
-    <Button
-        android:id="@+id/btnAtualizar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="Atualizar"
-        android:textColor="#FFFFFF" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-    <Button
-        android:id="@+id/btnRemover"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="Remover"
-        android:textColor="#FFFFFF" />
+                <!-- Número da Conta -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🔢 Número da Conta"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#1976D2"
+                    android:layout_marginBottom="8dp" />
 
-</LinearLayout>
+                <EditText
+                    android:id="@+id/numero"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginBottom="16dp"
+                    android:inputType="number"
+                    android:hint="Digite o número da conta"
+                    android:textSize="16sp"
+                    android:background="@drawable/edit_text_background"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="#212121"
+                    android:textColorHint="#757575" />
+
+                <!-- Nome -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="👤 Nome do Cliente"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#1976D2"
+                    android:layout_marginBottom="8dp" />
+
+                <EditText
+                    android:id="@+id/nome"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Digite o nome completo"
+                    android:textSize="16sp"
+                    android:background="@drawable/edit_text_background"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="#212121"
+                    android:textColorHint="#757575" />
+
+                <!-- CPF -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🆔 CPF"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#1976D2"
+                    android:layout_marginBottom="8dp" />
+
+                <EditText
+                    android:id="@+id/cpf"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginBottom="16dp"
+                    android:hint="Digite o CPF"
+                    android:inputType="number"
+                    android:textSize="16sp"
+                    android:background="@drawable/edit_text_background"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="#212121"
+                    android:textColorHint="#757575" />
+
+                <!-- Saldo -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="💰 Saldo Inicial"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#1976D2"
+                    android:layout_marginBottom="8dp" />
+
+                <EditText
+                    android:id="@+id/saldo"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginBottom="24dp"
+                    android:inputType="numberDecimal"
+                    android:hint="Digite o saldo inicial"
+                    android:textSize="16sp"
+                    android:background="@drawable/edit_text_background"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="#212121"
+                    android:textColorHint="#757575" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Botões -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btnAtualizar"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginBottom="12dp"
+                android:text="💾 Salvar Conta"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:background="@drawable/button_primary"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/btnRemover"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="🗑️ Excluir Conta"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:background="@drawable/button_danger"
+                android:textColor="#FFFFFF" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

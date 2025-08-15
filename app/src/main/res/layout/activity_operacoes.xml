@@ -1,77 +1,147 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="5dp">
+    android:background="#F5F5F5">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tipoOperacao"
-        android:text="TIPO DA OPERAÇÃO"
-        android:textSize="32sp"
-        android:layout_margin="5dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Número da Conta Origem"
-        android:textSize="24sp" />
-
-    <EditText
-        android:id="@+id/numeroContaOrigem"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:inputType="number"
-        android:fontFamily="sans-serif-light"
-        android:hint="Digite o número da conta"
-        android:minHeight="48dp"
-        android:textSize="18sp" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/labelContaDestino"
-        android:text="Número da Conta Destino"
-        android:textSize="24sp" />
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#1976D2"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
 
-    <EditText
-        android:id="@+id/numeroContaDestino"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:inputType="number"
-        android:fontFamily="sans-serif-light"
-        android:hint="Digite o número da conta"
-        android:minHeight="48dp"
-        android:textSize="18sp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tipoOperacao"
+                android:text="💸 OPERAÇÃO BANCÁRIA"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:gravity="center"
+                android:layout_marginBottom="8dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Valor"
-        android:textSize="24sp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Realize operações de crédito, débito ou transferência"
+                android:textSize="14sp"
+                android:textColor="#E3F2FD"
+                android:gravity="center" />
 
-    <EditText
-        android:id="@+id/valor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:inputType="numberDecimal"
-        android:fontFamily="sans-serif-light"
-        android:hint="Digite o valor a ser "
-        android:minHeight="48dp"
-        android:textSize="18sp" />
+        </LinearLayout>
 
-    <Button
-        android:id="@+id/btnOperacao"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="Realizar Operação"
-        android:textColor="#FFFFFF" />
+        <!-- Formulário -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#FFFFFF"
+            android:layout_marginBottom="16dp">
 
-</LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <!-- Conta Origem -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🏦 Conta de Origem"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#1976D2"
+                    android:layout_marginBottom="8dp" />
+
+                <EditText
+                    android:id="@+id/numeroContaOrigem"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginBottom="16dp"
+                    android:inputType="number"
+                    android:hint="Digite o número da conta"
+                    android:textSize="16sp"
+                    android:background="@drawable/edit_text_background"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="#212121"
+                    android:textColorHint="#757575" />
+
+                <!-- Conta Destino -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/labelContaDestino"
+                    android:text="🎯 Conta de Destino"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#1976D2"
+                    android:layout_marginBottom="8dp" />
+
+                <EditText
+                    android:id="@+id/numeroContaDestino"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginBottom="16dp"
+                    android:inputType="number"
+                    android:hint="Digite o número da conta"
+                    android:textSize="16sp"
+                    android:background="@drawable/edit_text_background"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="#212121"
+                    android:textColorHint="#757575" />
+
+                <!-- Valor -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="💰 Valor"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#1976D2"
+                    android:layout_marginBottom="8dp" />
+
+                <EditText
+                    android:id="@+id/valor"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginBottom="24dp"
+                    android:inputType="numberDecimal"
+                    android:hint="Digite o valor"
+                    android:textSize="16sp"
+                    android:background="@drawable/edit_text_background"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="#212121"
+                    android:textColorHint="#757575" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Botão de Operação -->
+        <Button
+            android:id="@+id/btnOperacao"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:text="🚀 Realizar Operação"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:background="@drawable/button_primary"
+            android:textColor="#FFFFFF" />
+
+    </LinearLayout>
+</ScrollView>
