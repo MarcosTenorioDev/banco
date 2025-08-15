@@ -1,68 +1,212 @@
-# Projeto Android
+# Documentação do Projeto Banco Android
 
-## Banco
+## Sobre o Projeto
 
-A aplicação Banco está parcialmente implementada no momento. Existem vários métodos e trechos de códigos com anotações lembrando que faltam implementar alguns detalhes da aplicação.
+Este é um aplicativo Android que simula um sistema bancário básico. O projeto foi desenvolvido usando a arquitetura MVVM com Room Database para persistência local. O app permite gerenciar contas bancárias, fazer operações como crédito, débito e transferência, além de registrar e consultar transações.
 
-1. Na classe `ContasActivity`, já há um `RecyclerView` que usa um `Adapter` (`ContaAdapter`) para mostrar uma lista de contas, mas os dados ainda não estão sendo recuperados do banco de dados. Dica: use o atributo `contas` (com tipo `LiveData<List<Conta>>`) de `ContaViewModel` para fazer isto;
+## O que foi implementado
 
-2. Na classe `ContaViewHolder`, a imagem que é mostrada no `RecyclerView` com a listagem de contas não é alterada caso o saldo esteja negativo. Sempre está sendo usada a imagem padrão definida em `res/layout/linha_conta.xml`. Na função `bindTo`, inclua o código que checa o saldo da conta e atualiza a imagem para `res/drawable/delete.png` em caso de saldo negativo, e usa `res/drawable/ok.png`, caso o saldo esteja positivo. 
+### Item 1 - ContasActivity
+Implementei a recuperação de dados do banco usando o ContaViewModel. A tela agora mostra a lista de contas atualizada automaticamente quando há mudanças no banco de dados. Usei o LiveData para observar as mudanças e o RecyclerView para exibir a lista de forma eficiente.
 
-3. Na classe `ContaViewHolder`, ajuste o código do listener do botão de remover conta para que a funcionalidade seja implementada, usando o respectivo método no `ViewModel`;
+```java
+viewModel.contas.observe(this, todasContas -> {
+    adapter.submitList(todasContas);
+});
+```
 
-4. Na classe `ContaViewHolder`, o `Intent` criado para enviar o usuário para a tela `EditarContaActivity` não inclui o número da conta, informação essencial para recuperar os dados da conta na tela a ser aberta. Adicione o número da conta como um `extra` do `Intent`, para que a tela de edição saiba qual conta carregar;
+### Item 2 - ContaViewHolder (Imagem baseada no saldo)
+Adicionei lógica para mudar o ícone da conta baseado no saldo. Se o saldo for negativo, mostra o ícone de delete (vermelho), se não, mostra o ícone OK (verde). Isso ajuda a identificar visualmente contas com problemas.
 
-5. Na classe `AdicionarContaActivity`, inclua a funcionalidade de validar as informações digitadas no formulário antes de criar um objeto `Conta`.  Por exemplo, nenhum campo deve estar em branco, o saldo deve ser um número válido, assim por diante. Exiba uma mensagem de erro ao usuário se a validação falhar. Se a validação for bem-sucedida, use o método do `ContaViewModel` para armazenar o objeto no banco de dados;
+```java
+if (c.saldo < 0) {
+    this.icone.setImageResource(R.drawable.delete);
+} else {
+    this.icone.setImageResource(R.drawable.ok);
+}
+```
 
-6. Na classe `ContaDAO`:
-    - Implemente os métodos para atualizar (`@Update`) e remover (`@Delete`) uma `Conta`.
-    - Crie três novas queries (`@Query`) para buscar contas:
-        * Uma que retorne um objeto `Conta` buscando pelo seu número (chave primária).
-        * Uma que retorne uma `List<Conta>` buscando pelo nome do cliente.
-        * Uma que retorne uma `List<Conta>` buscando pelo CPF do cliente.
+### Item 3 - ContaViewHolder (Botão remover)
+Configurei o botão de deletar para chamar o método remover do ViewModel. Tive que instanciar o ViewModel dentro do listener para ter acesso ao contexto correto.
 
-7. Na classe `ContaRepository`, implemente a lógica dos métodos para atualizar e remover contas no banco de dados, além dos métodos para buscar pelo número da conta, pelo nome do cliente e pelo CPF do cliente. Estes métodos devem usar os métodos criados na classe `ContaDAO` no passo anterior. Lembre-se que estas operações devem rodar em uma thread de background, portanto use a anotação correspondente (`@WorkerThread`);
+```java
+    ContaViewModel viewModel = new ViewModelProvider((androidx.activity.ComponentActivity) this.context).get(ContaViewModel.class);
+    viewModel.remover(c);
+```
 
-8. Na classe `ContaViewModel`, inclua métodos para atualizar e remover contas no banco de dados, além de um método para buscar pelo número da conta. Estes métodos devem usar os métodos correspondentes criados na classe `ContaRepository` no passo anterior;
+### Item 4 - ContaViewHolder (Intent com número da conta)
+Quando o usuário clica em editar, o app agora passa o número da conta como extra no Intent. Isso permite que a tela de edição saiba qual conta carregar.
 
-9. Na classe `EditarContaActivity`, recupere o número da conta por meio do `extra` passado pelo Intent. Use o `ContaViewModel` para buscar os dados dessa conta e preencher os campos do formulário.
+```java
+Intent i = new Intent(this.context, EditarContaActivity.class);
+i.putExtra("numeroDaConta", c.numero);
+```
 
-10. Na classe `EditarContaActivity`, assim como na tela que adiciona contas, inclua a funcionalidade de validar as informações digitadas (ex.: nenhum campo em branco, saldo é um número) antes de atualizar a `Conta` no banco de dados. Lembre de usar o método correspondente de `ContaViewModel` para armazenar o objeto atualizado no banco de dados;
+### Item 5 - AdicionarContaActivity (Validação)
+Implementei validações completas para todos os campos:
+- Nome obrigatório com mínimo de 5 caracteres
+- CPF obrigatório
+- Número da conta obrigatório
+- Saldo obrigatório e deve ser um número válido maior que zero
 
-11. Na classe `EditarContaActivity`, implemente a lógica do botão de remover, que usa `ContaViewModel` para remover o objeto do banco de dados;
+Se alguma validação falha, o app mostra uma mensagem específica e foca no campo com problema.
 
-12. Na classe `BancoViewModel`, inclua métodos para realizar as operações de transferir, creditar, e debitar, bem como métodos para buscar pelo número da conta, pelo nome do cliente e pelo CPF do cliente. Estes métodos devem usar os métodos de `ContaRepository` criados em passos anteriores;
+*Ex:*
+```java
+    if (saldoConta.isEmpty()) {
+        Toast.makeText(this, "Saldo é obrigatório!", Toast.LENGTH_SHORT).show();
+        campoSaldo.requestFocus();
+        return;
+    }
+```
 
-13. Nas classes `DebitarActivity`, `CreditarActivity`, e `TransferirActivity`, implementar validação dos números das contas e do valor da operação, antes de efetuar a operação correspondente à tela. Verifique se as contas existem e se o valor é positivo. Crie um objeto `Transacao` e use o `TransacaoViewModel` para salvá-lo no banco de dados após cada operação bem-sucedida;
+### Item 6 - ContaDAO
+Adicionei os métodos de update e delete, além de três queries de busca:
+- Busca por número da conta (retorna uma conta única)
+- Busca por nome do cliente (busca parcial com LIKE)
+- Busca por CPF (busca exata)
 
-14. Na classe `PesquisarActivity`, implementar a lógica para realizar a busca no banco de dados de acordo com o tipo de busca escolhido pelo usuário (ver `RadioGroup` com id `tipoPesquisa`);
+Usei as anotações @Update e @Delete do Room, e @Query para as buscas personalizadas.
 
-15. Na classe `PesquisarActivity`, ao realizar uma busca, atualizar o `RecyclerView` com os resultados na medida que encontrar algo;
+### Item 7 - ContaRepository
+Implementei os métodos do repository usando @WorkerThread para garantir que as operações de banco rodem em background. O repository encapsula as operações do DAO e fornece uma interface mais limpa.
 
-16. Na classe `MainActivity`, mostrar o valor total de dinheiro armazenado no banco na tela principal. Este valor deve ser a soma de todos os saldos das contas armazenadas no banco de dados. Atenção para a possibilidade das contas terem saldo negativo;
+### Item 8 - ContaViewModel
+Implementei métodos simples para as operações de CRUD e busca. Todos os métodos seguem o mesmo padrão, rodando em thread separada para não travar a UI. Adicionei também o método getRepository() para permitir acesso direto ao repository quando necessário.
 
-17. Na classe `TransacaoViewHolder`, o valor da transação está sempre sendo exibido em azul. Altere o código para que o valor da transação seja exibido em vermelho, no caso de transações de débito.
+```java
+void buscarPeloNome(String nomeCliente) {
+    new Thread(() -> repository.buscarPeloNome(nomeCliente)).start();
+}
 
-18. Na classe `TransacaoDAO`, inclua métodos para buscar transações pelo (1) número da conta, (2) pela data, filtrando pelo tipo da transação (crédito, débito, ou todas);
+public ContaRepository getRepository() {
+    return repository;
+}
+```
 
-19. Na classe `TransacaoRepository`, implemente o corpo dos métodos para buscar transações pelo (1) número da conta, (2) pela data, filtrando pelo tipo da transação (crédito, débito, ou todas). Estes métodos devem usar os métodos criados na classe `TransacaoDAO` no passo anterior;
+### Item 9 - EditarContaActivity (Recuperar dados)
+A tela recupera o número da conta do Intent e busca os dados diretamente do repository em uma thread separada. Os campos são preenchidos automaticamente quando os dados chegam, usando runOnUiThread() para atualizar a UI na thread principal.
 
-20. Na classe `TransacaoViewModel`, inclua métodos para realizar as buscas, usando os métodos criados na classe `TransacaoRepository` no passo anterior;
+```java
+    new Thread(() -> {
+        contaAtual = viewModel.getRepository().buscarPeloNumero(numeroConta);
+        runOnUiThread(() -> {
+            if (contaAtual != null) {
+                campoNome.setText(contaAtual.nomeCliente);
+                campoNumero.setText(contaAtual.numero);
+                campoCPF.setText(contaAtual.cpfCliente);
+                campoSaldo.setText(String.valueOf(contaAtual.saldo));
+            }
+        });
+    }).start();           
+```
 
-21. Na classe `TransacoesActivity`, implementar o código que faz busca no banco de dados de acordo com o tipo de busca escolhido pelo usuário (ver `RadioGroup` `tipoPesquisa`) e exibe (atualiza) a lista na tela. O `RecyclerView` inicialmente deve mostrar todas as transações registradas.
+### Item 10 - EditarContaActivity (Validação e atualização)
+Reutilizei as mesmas validações do Item 5 para manter consistência. Quando a validação passa, crio um novo objeto Conta e chamo o método atualizar do ViewModel.
 
-## Daqui em diante - Opcional
+### Item 11 - EditarContaActivity (Botão remover)
+O botão de remover usa a variável contaAtual que foi carregada anteriormente e chama o método remover do ViewModel. Mostra uma mensagem de sucesso e fecha a tela.
 
-1. Implemente a funcionalidade de gerenciamento de Clientes. Ajuste o banco de dados para refletir o relacionamento onde uma `Conta` pertence a um `Cliente`, e um `Cliente` pode ter várias contas. Ao adicionar uma conta, o usuário selecionaria um cliente já existente, não sendo possível adicionar uma conta com um cliente que não existe no Banco.
+```java
+btnRemover.setOnClickListener(v -> {
+    if (contaAtual != null) {
+        viewModel.remover(contaAtual);
+        Toast.makeText(this, "Conta removida com sucesso!", Toast.LENGTH_SHORT).show();
+        finish();
+    }
+});
+```
 
-2. Faça a extração das strings de todo o aplicativo e traduza a aplicação para outra língua;
+### Item 12 - BancoViewModel
+Implementei os métodos para as operações bancárias (transferir, creditar, debitar) e buscas. Cada operação roda em thread separada e verifica se as contas existem antes de fazer as alterações.
 
-3. Fazer melhorias gerais de UI na aplicação.
+### Item 13 - Activities de Operações
+Todas as telas de operação (CreditarActivity, DebitarActivity, TransferirActivity) agora têm validação completa e criam automaticamente um registro de transação após a operação bem-sucedida.
 
-## ATENÇÃO
+### Item 14 - PesquisarActivity (Lógica de busca)
+A tela de pesquisa verifica qual tipo de busca foi selecionado (por nome, CPF ou número da conta) e chama o método apropriado.
 
-- Entregue um arquivo `.zip` com a pasta do projeto, após executar a opção "_Clean Project_" na IDE, para diminuir o tamanho do arquivo;
-- Escreva um arquivo `README.md` (ou um Google Docs) explicando quais passos do roteiro você completou (vide numeração acima) e detalhando as decisões de implementação que você tomou;
-- Adicione comentários claros no código explicando a função de cada novo método que você criou;
-- Se não for implementar a parte Opcional 1, não vai precisar mexer em nada que tem no pacote `br.ufpe.cin.residencia.banco.cliente`;
-- Grave um vídeo curto da sua aplicação em funcionamento, demonstrando as funcionalidades que você implementou.
+### Item 15 - PesquisarActivity (Atualização do RecyclerView)
+As buscas rodam em thread separada e atualizam o RecyclerView na thread principal usando runOnUiThread(). Se nenhum resultado é encontrado, mostra uma mensagem para o usuário.
+
+### Item 16 - MainActivity (Valor total do banco)
+A tela principal agora mostra o valor total de dinheiro no banco, somando todos os saldos das contas. O valor é atualizado automaticamente quando há mudanças.
+
+```java
+viewModel.getContaRepository().getContas().observe(this, listaContas -> {
+    double total = 0.0;
+    for (Conta conta : listaContas) {
+        total += conta.saldo;
+    }
+    String totalFormatado = String.format("R$ %.2f", total);
+    totalBanco.setText(totalFormatado);
+});
+```
+
+### Item 17 - TransacaoViewHolder (Cores diferenciadas)
+As transações de débito agora aparecem em vermelho, enquanto créditos aparecem em azul. Isso ajuda a identificar visualmente o tipo de transação.
+
+```java
+if (t.tipoTransacao == 'D') {
+    this.valorTransacao.setTextColor(Color.RED);
+} else {
+    this.valorTransacao.setTextColor(Color.BLUE);
+}
+```
+
+### Item 18 - TransacaoDAO
+Implementei métodos de busca para transações:
+- Por número da conta
+- Por data
+- Por data e tipo (crédito ou débito)
+- Por número da conta e tipo
+
+Todas as queries ordenam por data (mais recentes primeiro).
+
+### Item 19 - TransacaoRepository
+Adicionei os métodos do repository com @WorkerThread para as operações de banco, seguindo os exemplos anteriores. O repository encapsula as operações do DAO.
+
+### Item 20 - TransacaoViewModel
+Implementei métodos simples para as operações de busca de transações, seguindo o mesmo padrão do ContaViewModel. Todos os métodos rodam em thread separada para não travar a UI.
+
+```java
+void buscarTransacoesPelaData(String data) {
+    new Thread(() -> repository.buscarPelaData(data)).start();
+}
+```
+
+### Item 21 - TransacoesActivity
+A tela de transações agora permite buscar por data ou número da conta, com filtros opcionais por tipo de transação (crédito/débito). Os resultados são exibidos no RecyclerView e atualizados automaticamente.
+
+
+## Items opcionais:
+
+### Fazer melhorias gerais de UI na aplicação.
+#### 1. Tela Principal (MainActivity)
+- Layout em grid 2x3 para melhor organização
+- Botões coloridos com ícones emoji
+- Card destacado para o total do banco
+#### 2. Lista de Contas
+- Cards para as contas
+- Ícones de status com background circular
+- Botões de editar e excluir com cores diferenciadas
+- Efeito de profundidade
+#### 3. Formulários
+- Header informativo com ícones
+- Campos com background diferente do fundo
+- emojis
+#### 4. Operações Bancárias e histórico de transações,
+- Cards
+- Cores destacando items principais
+- RadioButtons com ícones e cores
+#### 5. Componetização personalizada
+- button_primary.xml - Botão azul principal
+- button_secondary.xml - Botão roxo
+- button_danger.xml - Botão vermelho
+- button_success.xml - Botão verde
+- button_info.xml - Botão azul claro
+- button_warning.xml - Botão laranja
+- button_dark.xml - Botão cinza
+- edit_text_background.xml - Background dos campos
+- icon_background.xml - Background dos ícones
+- valor_background.xml - Background dos valores
